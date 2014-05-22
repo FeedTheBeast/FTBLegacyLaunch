@@ -18,24 +18,21 @@ package net.ftb.legacylaunch.mclauncher;
 
 import java.applet.Applet;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import net.ftb.legacylaunch.util.OSUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MinecraftLauncher {
-public Logger log = new Logger("FTBLegacy");
+
+public static Logger log = Logger.getLogger("FTBLegacy");
+
     public static void main (String[] args) {
         String basepath = args[0], animationname = args[1], forgename = args[2], username = args[3], password = args[4], modPackName = args[5], modPackImageName = args[6];
-        Settings.getSettings().save(); //Call so that the settings file is loaded from the correct location.  Would be wrong on OS X and *nix if called after user.home is reset
 
         basepath = new File(basepath).getAbsoluteFile().toString().replaceAll("[/\\\\]$", "");
 
@@ -109,11 +106,11 @@ public Logger log = new Logger("FTBLegacy");
                 MinecraftFrame mcWindow = new MinecraftFrame(modPackName, modPackImageName, animationname);
                 mcWindow.start(mcappl, username, password);
             } catch (InstantiationException e) {
-                log.warning("Applet wrapper failed! Falling back to compatibility mode.", e);
+                log.warning("Applet wrapper failed! Falling back to compatibility mode.");
                 mc.getMethod("main", String[].class).invoke(null, (Object) new String[] { username, password });
             }
         } catch (Throwable t) {
-            log.error("Unhandled error launching minecraft", t);
+            log.severe("Unhandled error launching minecraft");
         }
     }
 }

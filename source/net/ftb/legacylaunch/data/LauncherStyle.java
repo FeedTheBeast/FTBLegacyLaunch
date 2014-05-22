@@ -32,14 +32,7 @@ public class LauncherStyle extends Properties {
 
     private static LauncherStyle currentStyle;
 
-    private static File baseStylePath;
-
     static {
-        baseStylePath = new File(OSUtils.getDynamicStorageLocation(), "launcher_styles");
-
-        if (!baseStylePath.exists()) {
-            baseStylePath.mkdir();
-        }
 
         currentStyle = new LauncherStyle();
         currentStyle.load();
@@ -58,18 +51,6 @@ public class LauncherStyle extends Properties {
     public Color filterInnerTextColor = new Color(255, 255, 255);
 
     public void load () {
-        this.load(Settings.getSettings().getStyle());
-    }
-
-    public void load (String file) {
-        File filename = new File(baseStylePath, file);
-        if (new File(baseStylePath, file).exists()) {
-            try {
-                this.load(new FileReader(filename));
-            } catch (FileNotFoundException e) {
-            } catch (IOException e) {
-            }
-        }
 
         this.control = loadColor("control", this.control);
         this.text = loadColor("text", this.text);

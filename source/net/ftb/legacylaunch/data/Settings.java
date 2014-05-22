@@ -35,63 +35,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.ftb.legacylaunch.util.OSUtils;
 import net.ftb.legacylaunch.util.OSUtils.OS;
 
 @SuppressWarnings("serial")
-public class Settings extends Properties {
-    @Getter
-    private static Settings settings;
-    private File configFile;
-    @Setter
-    private static JavaInfo currentJava = null;
-    @Getter
-    @Setter
-    private boolean forceUpdateEnabled = false;
-
-    static {
-        try {
-            settings = new Settings(new File(OSUtils.getDynamicStorageLocation(), "ftblaunch.cfg"));
-        } catch (IOException e) {
-            Logger.logError("Failed to load settings", e);
-        }
-    }
+public class Settings {
 
 
 
-    public String getStyle () {
-        return getProperty("style", "defaultStyle.cfg");
-    }
-
-    public void setStyle (String path) {
-        setProperty("style", path);
-    }
-
-
-    public void setLastExtendedState (int lastExtendedState) {
-        setProperty("lastExtendedState", String.valueOf(lastExtendedState));
-    }
-
-    public int getLastExtendedState () {
+    public static int getLastExtendedState () {
         return Integer.valueOf(getProperty("lastExtendedState", String.valueOf(Frame.MAXIMIZED_BOTH)));
     }
 
-    public void setLastPosition (Point lastPosition) {
-        int x = lastPosition.x;
-        int y = lastPosition.y;
-        if (x < 0) {
-            x = 0;
-        }
-        if (y < 0) {
-            y = 0;
-        }
-        Point p = new Point(x, y);
-        setObjectProperty("lastPosition", p);
-    }
-
-    public Point getLastPosition () {
+    public static Point getLastPosition () {
         Point lastPosition = (Point) getObjectProperty("lastPosition");
         if (lastPosition == null) {
             lastPosition = new Point(300, 300);
@@ -99,11 +55,8 @@ public class Settings extends Properties {
         return lastPosition;
     }
 
-    public void setLastDimension (Dimension lastDimension) {
-        setObjectProperty("lastDimension", lastDimension);
-    }
 
-    public Dimension getLastDimension () {
+    public static Dimension getLastDimension () {
         Dimension lastDimension = (Dimension) getObjectProperty("lastDimension");
         if (lastDimension == null) {
             lastDimension = new Dimension(854, 480);
@@ -111,11 +64,8 @@ public class Settings extends Properties {
         return lastDimension;
     }
 
-    public void setObjectProperty (String propertyName, Serializable value) {
-        setProperty(propertyName, objectToString(value));
-    }
 
-    public Object getObjectProperty (String propertyName) {
+    public static Object getObjectProperty (String propertyName) {
         return objectFromString(getProperty(propertyName, ""));
     }
 
@@ -132,25 +82,12 @@ public class Settings extends Properties {
                 ois.close();
             }
         } catch (Exception e) {
-            Logger.logError("Failed to read object from string: " + s, e);
+            //Logger.logError("Failed to read object from string: " + s, e);
             return null;
         }
     }
-
-    private static String objectToString (Serializable o) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            try {
-                oos.writeObject(o);
-                return javax.xml.bind.DatatypeConverter.printBase64Binary(baos.toByteArray());
-            } finally {
-                baos.close();
-                oos.close();
-            }
-        } catch (Exception e) {
-            Logger.logError("Failed to write object to string" + o, e);
-            return null;
-        }
+    //TODO use jcommander for this!!!
+    public static String getProperty(String s, String defVal){
+        return defVal;
     }
 }

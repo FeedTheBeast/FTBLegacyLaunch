@@ -77,12 +77,10 @@ public class MinecraftFrame extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().createImage(imagePath));
         super.setVisible(true);
         setResizable(true);
-        fixSize(Settings.getSettings().getLastDimension());
+        fixSize(Settings.getLastDimension());
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing (WindowEvent e) {
-                Settings.getSettings().setLastExtendedState(getExtendedState());
-                Settings.getSettings().save();
                 new Thread() {
                     public void run () {
                         try {
@@ -101,24 +99,12 @@ public class MinecraftFrame extends JFrame {
             }
         });
         final MinecraftFrame thisFrame = this;
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized (ComponentEvent e) {
-                Settings.getSettings().setLastDimension(thisFrame.getSize());
-                Settings.getSettings().save();
-            }
-
-            @Override
-            public void componentMoved (ComponentEvent e) {
-                Settings.getSettings().setLastPosition(thisFrame.getLocation());
-            }
-        });
     }
 
     public void start (Applet mcApplet, String user, String session) {
         JLabel label = new JLabel();
         Thread animation = new Thread();
-        Dimension size = Settings.getSettings().getLastDimension();
+        Dimension size = Settings.getLastDimension();
         if (!animationname.equalsIgnoreCase("empty")) {
             try {
                 animation.start();
@@ -158,7 +144,7 @@ public class MinecraftFrame extends JFrame {
 
     private void fixSize (Dimension size) {
         setSize(size);
-        setLocation(Settings.getSettings().getLastPosition());
-        setExtendedState(Settings.getSettings().getLastExtendedState());
+        setLocation(Settings.getLastPosition());
+        setExtendedState(Settings.getLastExtendedState());
     }
 }

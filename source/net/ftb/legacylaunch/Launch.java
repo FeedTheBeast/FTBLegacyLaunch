@@ -30,23 +30,18 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class Launch {
-
+    public static LegacyData ld;
 public static Logger log = Logger.getLogger("FTBLegacy");
 
     public static void main (String[] args) {
-        LegacyData ld = new LegacyData(args);
+        ld =new LegacyData(args);
         JCommander jc = new JCommander();
         jc.setAcceptUnknownOptions(true);
         jc.addObject(ld);
         jc.parse(args);
-        //working directory       animation                 forge               done                done                 done                   image
-      //  String basepath = args[0], animationname = args[1], forgename = args[2], username = args[3], password = args[4], modPackName = args[5], modPackImageName = args[6];
-
         ld.gameDir = new File(ld.gameDir).getAbsoluteFile().toString().replaceAll("[/\\\\]$", "");
-
         try {
             System.out.println("Loading jars...");
-            String[] jarFiles = new String[] { "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar", "jinput.jar" };//TODO this needs to be handled in the launcher itself!!!
             ArrayList<File> classPathFiles = new ArrayList<File>();
             File tempDir = new File(new File(ld.gameDir).getParentFile(), "instMods/");
             if (tempDir.isDirectory()) {
@@ -58,11 +53,8 @@ public static Logger log = Logger.getLogger("FTBLegacy");
                     }
                 }
             }
-
             classPathFiles.add(new File(tempDir, ld.forgeName));
-            for (String jarFile : jarFiles) {
-                classPathFiles.add(new File(new File(ld.gameDir, "bin"), jarFile));
-            }
+            classPathFiles.add(new File(ld.mcJar));
 
             URL[] urls = new URL[classPathFiles.size()];
             for (int i = 0; i < classPathFiles.size(); i++) {
@@ -75,7 +67,7 @@ public static Logger log = Logger.getLogger("FTBLegacy");
             }
 
             System.out.println("Loading natives...");
-            String nativesDir = new File(new File(ld.gameDir, "bin"), "natives").toString();
+            String nativesDir = new File(new File(ld.gameDir).getParentFile(), "natives").toString();
             System.out.println("Natives loaded...");
 
             System.setProperty("org.lwjgl.librarypath", nativesDir);
@@ -119,6 +111,7 @@ public static Logger log = Logger.getLogger("FTBLegacy");
             }
         } catch (Throwable t) {
             log.severe("Unhandled error launching minecraft");
+            t.printStackTrace();
         }
     }
 }

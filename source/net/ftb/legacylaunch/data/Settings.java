@@ -16,78 +16,30 @@
  */
 package net.ftb.legacylaunch.data;
 
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Point;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import net.ftb.legacylaunch.Launch;
 
-import net.ftb.legacylaunch.util.OSUtils;
-import net.ftb.legacylaunch.util.OSUtils.OS;
+import java.awt.Dimension;
+import java.awt.Point;
 
 @SuppressWarnings("serial")
 public class Settings {
 
-
-
     public static int getLastExtendedState () {
-        return Integer.valueOf(getProperty("lastExtendedState", String.valueOf(Frame.MAXIMIZED_BOTH)));
+        return Integer.valueOf(Launch.ld.lastExtendedState);
     }
 
     public static Point getLastPosition () {
-        Point lastPosition = (Point) getObjectProperty("lastPosition");
-        if (lastPosition == null) {
-            lastPosition = new Point(300, 300);
-        }
-        return lastPosition;
+        return new Point(300, 300);
     }
 
 
     public static Dimension getLastDimension () {
-        Dimension lastDimension = (Dimension) getObjectProperty("lastDimension");
+        Dimension lastDimension = new Dimension();
+        lastDimension.setSize(Double.parseDouble(Launch.ld.width), Double.parseDouble(Launch.ld.height));
         if (lastDimension == null) {
             lastDimension = new Dimension(854, 480);
         }
         return lastDimension;
     }
 
-
-    public static Object getObjectProperty (String propertyName) {
-        return objectFromString(getProperty(propertyName, ""));
-    }
-
-    public static Object objectFromString (String s) {
-        if (s == null || s.isEmpty()) {
-            return null;
-        }
-        byte[] data = javax.xml.bind.DatatypeConverter.parseBase64Binary(s);
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-            try {
-                return ois.readObject();
-            } finally {
-                ois.close();
-            }
-        } catch (Exception e) {
-            //Logger.logError("Failed to read object from string: " + s, e);
-            return null;
-        }
-    }
-    //TODO use jcommander for this!!!
-    public static String getProperty(String s, String defVal){
-        return defVal;
-    }
 }

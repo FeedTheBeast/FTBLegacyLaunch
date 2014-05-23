@@ -33,7 +33,7 @@ apply plugin: 'idea'
 apply plugin: 'shadow'
 
 project.ext {
-    mainClass = 'net.ftb.legacylaunch.MinecraftLauncher'
+    mainClass = 'net.ftb.legacylaunch.Launch'
     currentYear = '2014'
 }
 
@@ -69,12 +69,6 @@ task deleteShadow(type: Delete) {
     delete "${project.tasks.jar.getArchivePath().getPath().replace('.jar', '-shadow.jar')}"
 
 	}
-task zipApp(type: Zip) {
-    from "${project.buildDir}/macApp/"
-    destinationDir = file("${project.buildDir}/libs")
-    classifier = 'app'	
-}
-apply plugin: 'macAppBundle'
 
 build.dependsOn(deleteShadow)
 deleteShadow.dependsOn(fixJars)
@@ -105,3 +99,14 @@ sourceSets {
         }
     }
 }
+
+    if (project.hasProperty("local_maven")) {
+	    apply plugin: 'maven'
+            uploadArchives {
+                repositories {
+                    mavenDeployer {
+                        repository(url: "file://${local_maven}")
+                }
+            }
+        }
+    }

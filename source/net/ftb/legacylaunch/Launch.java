@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.ftb.legacylaunch.mclauncher;
+package net.ftb.legacylaunch;
+
+import com.beust.jcommander.JCommander;
+import net.ftb.legacylaunch.data.LegacyData;
 
 import java.applet.Applet;
 import java.io.File;
@@ -24,26 +27,31 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MinecraftLauncher {
+public class Launch {
 
 public static Logger log = Logger.getLogger("FTBLegacy");
 
     public static void main (String[] args) {
-        String basepath = args[0], animationname = args[1], forgename = args[2], username = args[3], password = args[4], modPackName = args[5], modPackImageName = args[6];
+        LegacyData ld = new LegacyData(args);
+        JCommander jc = new JCommander();
+        jc.setAcceptUnknownOptions(true);
+        jc.addObject(ld);
+        jc.parse(args);
+        //working directory       animation                 forge               done                done                 done                   image
+      //  String basepath = args[0], animationname = args[1], forgename = args[2], username = args[3], password = args[4], modPackName = args[5], modPackImageName = args[6];
 
-        basepath = new File(basepath).getAbsoluteFile().toString().replaceAll("[/\\\\]$", "");
+        ld.gameDir = new File(ld.gameDir).getAbsoluteFile().toString().replaceAll("[/\\\\]$", "");
 
         try {
             System.out.println("Loading jars...");
-            String[] jarFiles = new String[] { "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar", "jinput.jar" };
+            String[] jarFiles = new String[] { "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar", "jinput.jar" };//TODO this needs to be handled in the launcher itself!!!
             ArrayList<File> classPathFiles = new ArrayList<File>();
-            File tempDir = new File(new File(basepath).getParentFile(), "instMods/");
+            File tempDir = new File(new File(ld.gameDir).getParentFile(), "instMods/");
             if (tempDir.isDirectory()) {
                 for (String name : tempDir.list()) {
-                    if (!name.equalsIgnoreCase(forgename)) {
+                    if (!name.equalsIgnoreCase(ld.forgeName)) {
                         if (name.toLowerCase().endsWith(".zip") || name.toLowerCase().endsWith(".jar")) {
                             classPathFiles.add(new File(tempDir, name));
                         }
@@ -51,9 +59,9 @@ public static Logger log = Logger.getLogger("FTBLegacy");
                 }
             }
 
-            classPathFiles.add(new File(tempDir, forgename));
+            classPathFiles.add(new File(tempDir, ld.forgeName));
             for (String jarFile : jarFiles) {
-                classPathFiles.add(new File(new File(basepath, "bin"), jarFile));
+                classPathFiles.add(new File(new File(ld.gameDir, "bin"), jarFile));
             }
 
             URL[] urls = new URL[classPathFiles.size()];
@@ -67,15 +75,15 @@ public static Logger log = Logger.getLogger("FTBLegacy");
             }
 
             System.out.println("Loading natives...");
-            String nativesDir = new File(new File(basepath, "bin"), "natives").toString();
+            String nativesDir = new File(new File(ld.gameDir, "bin"), "natives").toString();
             System.out.println("Natives loaded...");
 
             System.setProperty("org.lwjgl.librarypath", nativesDir);
             System.setProperty("net.java.games.input.librarypath", nativesDir);
 
-            System.setProperty("user.home", new File(basepath).getParent());
+            System.setProperty("user.home", new File(ld.gameDir).getParent());
 
-            URLClassLoader cl = new URLClassLoader(urls, MinecraftLauncher.class.getClassLoader());
+            URLClassLoader cl = new URLClassLoader(urls, Launch.class.getClassLoader());
             System.out.println("Loading minecraft class");
             Class<?> mc = cl.loadClass("net.minecraft.client.Minecraft");
             System.out.println("mc = " + mc);
@@ -90,7 +98,7 @@ public static Logger log = Logger.getLogger("FTBLegacy");
                     continue;
                 }
                 f.setAccessible(true);
-                f.set(null, new File(basepath));
+                f.set(null, new File(ld.gameDir));
                 System.out.println("Fixed Minecraft Path: Field was " + f.toString());
                 break;
             }
@@ -103,11 +111,11 @@ public static Logger log = Logger.getLogger("FTBLegacy");
             try {
                 Class<?> MCAppletClass = cl.loadClass("net.minecraft.client.MinecraftApplet");
                 Applet mcappl = (Applet) MCAppletClass.newInstance();
-                MinecraftFrame mcWindow = new MinecraftFrame(modPackName, modPackImageName, animationname);
-                mcWindow.start(mcappl, username, password);
+                MinecraftFrame mcWindow = new MinecraftFrame(ld.packName, ld.packImage, ld.animationName);
+                mcWindow.start(mcappl, ld.auth_player_name, ld.auth_session);
             } catch (InstantiationException e) {
                 log.warning("Applet wrapper failed! Falling back to compatibility mode.");
-                mc.getMethod("main", String[].class).invoke(null, (Object) new String[] { username, password });
+                mc.getMethod("main", String[].class).invoke(null, (Object) new String[] { ld.auth_player_name, ld.auth_session });
             }
         } catch (Throwable t) {
             log.severe("Unhandled error launching minecraft");

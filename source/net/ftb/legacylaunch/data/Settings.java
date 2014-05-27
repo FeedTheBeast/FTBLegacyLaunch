@@ -36,9 +36,6 @@ public class Settings {
     public static Dimension getLastDimension () {
         Dimension lastDimension = new Dimension();
         lastDimension.setSize(Double.parseDouble(Launch.ld.width), Double.parseDouble(Launch.ld.height));
-        if (lastDimension == null) {
-            lastDimension = new Dimension(854, 480);
-        }
         return lastDimension;
     }
 

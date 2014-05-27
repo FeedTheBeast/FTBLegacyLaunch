@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 
 public class Launch {
     public static LegacyData ld;
-public static Logger log = Logger.getLogger("FTBLegacy");
+public static final Logger log = Logger.getLogger("FTBLegacy");
 
     public static void main (String[] args) {
         ld =new LegacyData(args);

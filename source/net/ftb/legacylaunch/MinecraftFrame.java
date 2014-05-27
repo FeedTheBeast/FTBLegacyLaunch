@@ -65,7 +65,7 @@ public class MinecraftFrame extends JFrame {
             try {
                 Class<?> fullScreenUtilityClass = Class.forName("com.apple.eawt.FullScreenUtilities");
                 java.lang.reflect.Method setWindowCanFullScreenMethod = fullScreenUtilityClass.getDeclaredMethod("setWindowCanFullScreen", new Class[] { Window.class, Boolean.TYPE });
-                setWindowCanFullScreenMethod.invoke(null, this, Boolean.valueOf(true));
+                setWindowCanFullScreenMethod.invoke(null, this, true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -96,7 +96,6 @@ public class MinecraftFrame extends JFrame {
                 System.exit(0);
             }
         });
-        final MinecraftFrame thisFrame = this;
     }
 
     public void start (Applet mcApplet, String user, String session) {

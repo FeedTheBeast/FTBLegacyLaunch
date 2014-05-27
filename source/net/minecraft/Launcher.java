@@ -26,7 +26,7 @@ import java.util.TreeMap;
 @SuppressWarnings("serial")
 public class Launcher extends Applet implements AppletStub {
     private Applet wrappedApplet;
-    private URL documentBase;
+    private final URL documentBase;
     private boolean active = false;
     private final Map<String, String> params;
 

@@ -80,8 +80,4 @@ public class LauncherStyle extends Properties {
         return currentStyle;
     }
 
-    public static void setCurrentStyle (LauncherStyle currentStyle) {
-        LauncherStyle.currentStyle = currentStyle;
-    }
-
 }

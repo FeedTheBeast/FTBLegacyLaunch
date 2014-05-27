@@ -8,7 +8,7 @@ import java.util.List;
 
 
 public class LegacyData {
-   String[] args;
+   private String[] args;
    public String auth_player_name;
    public String auth_session;
 

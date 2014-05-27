@@ -17,14 +17,7 @@
 package net.ftb.legacylaunch.data;
 
 import java.awt.Color;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Properties;
-
-import net.ftb.legacylaunch.util.OSUtils;
 
 public class LauncherStyle extends Properties {
 

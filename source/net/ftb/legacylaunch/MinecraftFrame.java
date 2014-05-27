@@ -65,7 +65,7 @@ public class MinecraftFrame extends JFrame {
             try {
                 Class<?> fullScreenUtilityClass = Class.forName("com.apple.eawt.FullScreenUtilities");
                 java.lang.reflect.Method setWindowCanFullScreenMethod = fullScreenUtilityClass.getDeclaredMethod("setWindowCanFullScreen", new Class[] { Window.class, Boolean.TYPE });
-                setWindowCanFullScreenMethod.invoke(null, new Object[] { this, Boolean.valueOf(true) });
+                setWindowCanFullScreenMethod.invoke(null, this, Boolean.valueOf(true));
             } catch (Exception e) {
                 e.printStackTrace();
             }
